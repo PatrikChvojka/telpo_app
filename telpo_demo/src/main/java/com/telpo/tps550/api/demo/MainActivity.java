@@ -141,7 +141,6 @@ public class MainActivity extends Activity implements KeyEventResolver.OnScanSuc
 
 						}
 					});
-					Log.w("myApp", "Oskenovane cez onResume");
 
 				} catch (UnsupportedEncodingException e) {
 					// TODO Auto-generated catch block
@@ -159,7 +158,6 @@ public class MainActivity extends Activity implements KeyEventResolver.OnScanSuc
 	@Override
 	public void onScanSuccess(String barcode) {
 		textRestult.setText(barcode);
-		Log.w("myApp", "Oskenovane cez onScanSuccess");
 	}
 
 	@Override
