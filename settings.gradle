@@ -1,0 +1,2 @@
+include ':telpo_demo'
+rootProject.name = "TELPO_SDK_NEW_AS"

@@ -1,0 +1,14 @@
+*.iml
+.gradle
+/local.properties
+/.idea
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+/*/release
+/obj
+/telpo_service/libs/arm64-v8a
+/telpo_service/libs/armeabi-v7a
+/telpo_service/libs/armeabi

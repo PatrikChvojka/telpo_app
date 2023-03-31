@@ -1,0 +1,75 @@
+apply plugin: 'com.android.application'
+
+android {
+
+    compileSdkVersion 33
+    buildToolsVersion "30.0.0"
+
+    defaultConfig {
+        applicationId "com.common.demo"
+        minSdkVersion 26
+        targetSdkVersion 33
+        versionCode 2
+        versionName new Date().format("yyyyMMddHHmmss")
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            buildConfigField 'String', 'versionDateTime','\"' + new Date().format("yyyyMMdd") + '\"'
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            android.applicationVariants.all { variant ->
+                variant.outputs.all { output ->
+                    outputFileName  ="TELPO_DEMO_NEW_" +
+//                    "V" + defaultConfig.versionName + "." + defaultConfig.versionCode + "_" +
+                            new Date().format("yyyyMMddHHmmss") +
+                            ".apk"
+                }
+            }
+        }
+
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+//            android.applicationVariants.all { variant ->
+//                variant.outputs.all { output ->
+//                    outputFileName  ="TELPO_DEMO_NEW_" +
+////                    "V" + defaultConfig.versionName + "." + defaultConfig.versionCode + "_" +
+//                            new Date().format("yyyyMMdd") +
+//                            ".apk"
+//                }
+//            }
+        }
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar","*.aar"])
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+
+//    implementation project(':telpo_api')
+//    implementation files('libs/core-3.1.0.jar')
+//    implementation files('libs/telpo_api_20221115.aar')
+//    implementation files('libs/SmartCardLib.jar')
+//    debugImplementation 'com.squareup.leakcanary:leakcanary-android:1.6.1'
+//    releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.1'
+}
