@@ -22,6 +22,7 @@ import com.common.apiutil.pos.CommonUtil;
 import com.common.callback.IDecodeReaderListener;
 import com.common.demo.R;
 import com.telpo.tps550.api.demo.decode.KeyEventResolver;
+import com.telpo.tps550.api.demo.timedata.ovladanieSvetiel;
 
 import android.widget.EditText;
 
@@ -54,7 +55,8 @@ public class MainActivity extends Activity implements KeyEventResolver.OnScanSuc
 	private DecodeReader mDecodeReader;
 	private KeyEventResolver mKeyEventResolver;
 	private Button nastavsvetlo, vypnisvetlo;
-
+	private int mLedColor;
+	private int mLedType;
 
 	protected void onStop() {
 		// TODO Auto-generated method stub
@@ -77,6 +79,25 @@ public class MainActivity extends Activity implements KeyEventResolver.OnScanSuc
 		textRestult.setInputType(0);
 		textRestult.setSingleLine(false);
 		textRestult.setHorizontallyScrolling(false);
+
+		nastavsvetlo = findViewById(R.id.nastavsvetlo);
+		vypnisvetlo = findViewById(R.id.vypnisvetlo);
+
+
+		// zapni svetlo
+		nastavsvetlo.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				ovladanieSvetiel.greenLightOn();
+			}
+		});
+
+		// vypni svetlo
+		vypnisvetlo.setOnClickListener(new OnClickListener() {
+			public void onClick(View v) {
+				ovladanieSvetiel.redLightOn();
+			}
+		});
+
 
 	}
 
