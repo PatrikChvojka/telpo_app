@@ -1,5 +1,8 @@
 package com.telpo.tps550.api.demo;
 
+import static com.telpo.tps550.api.demo.timedata.globalFunctions.*;
+import static com.telpo.tps550.api.demo.timedata.ovladanieSvetiel.*;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -22,7 +25,6 @@ import com.common.apiutil.pos.CommonUtil;
 import com.common.callback.IDecodeReaderListener;
 import com.common.demo.R;
 import com.telpo.tps550.api.demo.decode.KeyEventResolver;
-import com.telpo.tps550.api.demo.timedata.ovladanieSvetiel;
 
 import android.widget.EditText;
 
@@ -54,9 +56,6 @@ public class MainActivity extends Activity implements KeyEventResolver.OnScanSuc
 	boolean isreading;
 	private DecodeReader mDecodeReader;
 	private KeyEventResolver mKeyEventResolver;
-	private Button nastavsvetlo, vypnisvetlo;
-	private int mLedColor;
-	private int mLedType;
 
 	protected void onStop() {
 		// TODO Auto-generated method stub
@@ -66,6 +65,13 @@ public class MainActivity extends Activity implements KeyEventResolver.OnScanSuc
 		}
 		isreading = false;
 	}
+
+	/*
+	* FUNKCIE:
+	* greenLightOn(); 	- zapne zelene diodky
+	* redLightOn();	- zapne cervene diodky
+	*
+	* */
 
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -80,34 +86,10 @@ public class MainActivity extends Activity implements KeyEventResolver.OnScanSuc
 		textRestult.setSingleLine(false);
 		textRestult.setHorizontallyScrolling(false);
 
-		nastavsvetlo = findViewById(R.id.nastavsvetlo);
-		vypnisvetlo = findViewById(R.id.vypnisvetlo);
-
-
-		// zapni svetlo
-		nastavsvetlo.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				ovladanieSvetiel.greenLightOn();
-			}
-		});
-
-		// vypni svetlo
-		vypnisvetlo.setOnClickListener(new OnClickListener() {
-			public void onClick(View v) {
-				ovladanieSvetiel.redLightOn();
-			}
-		});
-
-
 	}
 
 	// vyčisti byte array
-	static byte[] trim(byte[] bytes)
-	{
-		int i = bytes.length - 1;
-		while (i >= 0 && bytes[i] == 0){ --i; }
-		return Arrays.copyOf(bytes, i + 1);
-	}
+
 
 	protected void onResume()  {
 		super.onResume();
@@ -115,63 +97,41 @@ public class MainActivity extends Activity implements KeyEventResolver.OnScanSuc
 			mDecodeReader = new DecodeReader(this);//初始化
 		}
 		mKeyEventResolver = new KeyEventResolver(this);
-
 		mDecodeReader.setDecodeReaderListener(new IDecodeReaderListener() {
 
 			@Override
 			public void onRecvData(final byte[] data) {
 
 				try {
-
 					// SKENOVANIE
 					final String str = new String(trim(data), "UTF-8");
 					runOnUiThread(new Runnable() {
 						@Override
 						public void run() {
-							textRestult.setText(str);
+							// api call
+							int api_result = api_call(str);
+							textRestult.setText(Integer.toString(api_result));
 
-							final String BASE_URL = "https://progresivneaplikacie.sk/project/telpo_java/index.php";
-
-							final OkHttpClient client = new OkHttpClient();
-							RequestBody formBody = new FormBody.Builder()
-									.add("scanned", str)
-									.build();
-							Request request = new Request.Builder()
-									.url(BASE_URL)
-									.post(formBody)
-									.build();
-							client.newCall(request).enqueue(new Callback() {
-								@Override
-								public void onFailure (Call call, IOException e) {
-									e.printStackTrace();
-								}
-								@Override
-								public void onResponse (Call call, Response response) throws IOException {
-									if( response.isSuccessful() ){
-										final String myResponse = response.body().string();
-
-										MainActivity.this.runOnUiThread(new Runnable(){
-											@Override
-											public void run () {
-												Log.w("myApp", myResponse);
-											}
-										});
-									}
-								}
-							});
-
+							if(api_result == 1){
+								Log.w("app", "zapinam zelene svetlo");
+								greenLightOn();
+							}else{
+								Log.w("app", "zapinam červene svetlo");
+								redLightOn();
+							}
 						}
 					});
 
 				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
 		});
 
-		// ZAPNI SKENOVANIE PO ZAPNUTI
+		// ZAPNI SKENOVANIE PO ZAPNUTI A NASTAV DIODKY
 		textRestult.setText("Pripravený skenovať?");
+		greenLightOff();
+		redLightOff();
 		int ret = mDecodeReader.open(115200);
 
 	}

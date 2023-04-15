@@ -39,26 +39,4 @@
         android:src="@drawable/scan" />
 
 
-    <Button
-        android:id="@+id/nastavsvetlo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@android:color/holo_green_dark"
-        android:padding="40px"
-        android:text="Green"
-        android:textColor="@color/White"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <Button
-        android:id="@+id/vypnisvetlo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/Red"
-        android:padding="40px"
-        android:text="Red"
-        android:textColor="@color/White"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
