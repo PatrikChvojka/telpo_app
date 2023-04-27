@@ -1,49 +1,28 @@
 package com.telpo.tps550.api.demo.timedata;
+import static com.telpo.tps550.api.demo.timedata.ovladanieSvetiel.greenLightOn;
+import static com.telpo.tps550.api.demo.timedata.ovladanieSvetiel.redLightOn;
 
 import android.util.Log;
 
-import com.telpo.tps550.api.demo.MainActivity;
+import com.common.apiutil.pos.CommonUtil;
 
-import java.io.IOException;
 import java.util.Arrays;
 
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
 public class globalFunctions {
-
-
-    public static String httpRequest (String $url){
-
-        final OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url($url)
-                .build();
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure (Call call, IOException e) {
-                e.printStackTrace();
-            }
-            @Override
-            public void onResponse (Call call, Response response) throws IOException {
-                if( response.isSuccessful() ){
-                    final String myResponse = response.body().string();
-                    Log.w("myApp", myResponse);
-                }
-            }
-        });
-
-        return $url;
-    }
 
     public static int api_call (String $result){
         int randomNumber = (int) ((Math.random() * (2 - 0)) + 0);
         return randomNumber;
+    }
+
+    public static boolean contains( String haystack, String needle ) {
+        haystack = haystack == null ? "" : haystack;
+        needle = needle == null ? "" : needle;
+
+        // Works, but is not the best.
+        //return haystack.toLowerCase().indexOf( needle.toLowerCase() ) > -1
+
+        return haystack.toLowerCase().contains( needle.toLowerCase() );
     }
 
     public static byte[] trim(byte[] bytes)
@@ -51,5 +30,25 @@ public class globalFunctions {
         int i = bytes.length - 1;
         while (i >= 0 && bytes[i] == 0){ --i; }
         return Arrays.copyOf(bytes, i + 1);
+    }
+
+    // časove zapinanie relatka
+
+    public static void otvorTurniket() {
+
+        // otvor
+        Log.w("turniket ", "otvaram");
+        CommonUtil.setRelayPower(1,1);
+        greenLightOn();
+
+        new android.os.Handler().postDelayed(
+                new Runnable() {
+                    public void run() {
+                        // zatvor
+                        Log.i("turniket","zatvaram");
+                        CommonUtil.setRelayPower(1,0);
+                        redLightOn();
+                    }
+                }, 5000);
     }
 }

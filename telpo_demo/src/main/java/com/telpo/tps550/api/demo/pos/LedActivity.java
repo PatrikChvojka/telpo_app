@@ -1,7 +1,6 @@
 package com.telpo.tps550.api.demo.pos;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -16,8 +15,6 @@ import android.widget.TextView;
 import com.common.CommonConstants;
 import com.common.apiutil.pos.CommonUtil;
 import com.common.demo.R;
-import com.telpo.tps550.api.demo.MainActivity;
-import com.telpo.tps550.api.demo.serial.SerialTestActivity;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;

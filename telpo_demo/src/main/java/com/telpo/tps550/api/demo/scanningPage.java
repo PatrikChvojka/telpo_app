@@ -38,6 +38,7 @@ public class scanningPage extends Activity implements KeyEventResolver.OnScanSuc
      * FUNKCIE:
      * greenLightOn(); 	- zapne zelene diodky
      * redLightOn();	- zapne cervene diodky
+     * otvorTurniket(); - otvor turniket
      *
      * */
 
@@ -56,7 +57,7 @@ public class scanningPage extends Activity implements KeyEventResolver.OnScanSuc
 
     }
 
-    // vyčisti byte array
+	// vyčisti byte array
 
 
 	protected void onResume()  {
@@ -82,10 +83,11 @@ public class scanningPage extends Activity implements KeyEventResolver.OnScanSuc
 
 							if(api_result == 1){
 								Log.w("app", "zapinam zelene svetlo");
-								greenLightOn();
+								// otvor turniket
+								otvorTurniket();
 							}else{
 								Log.w("app", "zapinam červene svetlo");
-								redLightOn();
+
 							}
 						}
 					});

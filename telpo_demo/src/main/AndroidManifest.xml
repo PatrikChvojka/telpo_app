@@ -466,7 +466,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.telpo.tps550.api.demo.LoginFront"
+        <activity android:name="com.telpo.tps550.api.demo.scanningPage"
             android:configChanges="orientation|keyboardHidden"
             android:windowSoftInputMode="adjustUnspecified|stateHidden"
             android:launchMode="singleTask"
