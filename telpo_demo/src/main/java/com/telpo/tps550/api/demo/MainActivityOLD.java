@@ -537,10 +537,13 @@ public class MainActivityOLD extends Activity  implements KeyEventResolver.OnSca
 				File device2 = new File("/dev/nq-nci");
 				File device3 = new File("dev/nxpnfc");
 				if (device.exists() || device2.exists() || device3.exists()) {
+					Log.i("turniket","1");
 					startActivity(new Intent(MainActivityOLD.this, NfcActivity.class));
 				} else if(!SystemUtil.checkPackage("com.common.service") || SystemUtil.isPN512NFC()){
+					Log.i("turniket","2");
 					startActivity(new Intent(MainActivityOLD.this, NfcPN512ActivityMain.class));
 				} else {
+					Log.i("turniket","3");
 					startActivity(new Intent(MainActivityOLD.this, NfcActivity_tps537.class));
 				}
 
