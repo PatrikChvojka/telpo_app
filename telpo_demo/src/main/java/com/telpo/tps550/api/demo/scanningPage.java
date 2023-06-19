@@ -2,6 +2,9 @@ package com.telpo.tps550.api.demo;
 
 import static com.telpo.tps550.api.demo.timedata.globalFunctions.*;
 import static com.telpo.tps550.api.demo.timedata.ovladanieSvetiel.*;
+import static com.telpo.tps550.api.demo.util.DataProcessUtils.getHexString;
+
+import static java.nio.charset.StandardCharsets.US_ASCII;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -11,6 +14,7 @@ import android.content.IntentFilter;
 import android.nfc.NfcAdapter;
 import android.nfc.NfcManager;
 import android.nfc.Tag;
+import android.nfc.tech.MifareClassic;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,6 +26,8 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -213,11 +219,12 @@ public class scanningPage extends Activity implements KeyEventResolver.OnScanSuc
 
 							if(api_result == 1){
 								Log.w("app", "zapinam zelene svetlo");
+								greenLightOn();
 								// otvor turniket
 								otvorTurniket();
 							}else{
 								Log.w("app", "zapinam červene svetlo");
-
+								redLightOn();
 							}
 						}
 					});
@@ -261,18 +268,16 @@ public class scanningPage extends Activity implements KeyEventResolver.OnScanSuc
 
 	// nfc
 
-	private String bytesToHexString(byte[] src) {
-		StringBuilder stringBuilder = new StringBuilder("0x");
-		if (src == null || src.length <= 0) {
-			return null;
+	private String bytesToHexString(byte[] bytes) {
+		StringBuffer hexString = new StringBuffer();
+		for (int i = 0; i < bytes.length; i++) {
+			int hex = (0xff & bytes[i]);
+			String tmp = Integer.toHexString(hex);
+			tmp = (tmp.length() < 2) ? "0" + tmp : tmp; // if tmp=="9" => tmp=="09"
+			hexString.append(tmp);
 		}
-		char[] buffer = new char[2];
-		for (int i = 0; i < src.length; i++) {
-			buffer[0] = Character.forDigit((src[i] >>> 4) & 0x0F, 16);
-			buffer[1] = Character.forDigit(src[i] & 0x0F, 16);
-			stringBuilder.append(buffer);
-		}
-		return stringBuilder.toString();
+
+		return hexString.toString().toUpperCase();
 	}
 
 	private void init_NFC() {
@@ -293,7 +298,172 @@ public class scanningPage extends Activity implements KeyEventResolver.OnScanSuc
 	long getCardTime = 0;
 	public void processIntent(Intent intent) {
 
-		String time = "";
+		// 1) Parse the intent and get the action that triggered this intent
+		String action = intent.getAction();
+		Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+		MifareClassic mfc = MifareClassic.get(tagFromIntent);
+		byte[] data;
+
+		try {       //  5.1) Connect to card
+			mfc.connect();
+			boolean auth = false;
+			String cardData = null;
+			// 5.2) and get the number of sectors this card has..and loop thru these sectors
+			int secCount = mfc.getSectorCount();
+			//Log.i("sectors count: ", String.valueOf(secCount));
+
+			int bCount = 0;
+			int bIndex = 0;
+			for(int j = 0; j < secCount; j++){
+
+				byte[] bytesKey = hex2Bytes("5FFFFFFFFFF9");
+
+				auth = mfc.authenticateSectorWithKeyA(j,bytesKey );
+				if(auth){
+					Log.i("auth sector", String.valueOf(j) + " yes");
+					bCount = mfc.getBlockCountInSector(j);
+					bIndex = 0;
+					for(int i = 0; i < bCount; i++){
+						bIndex = mfc.sectorToBlock(j);
+						data = mfc.readBlock(bIndex);
+
+
+						cardData = new String(data);
+
+
+						//String str = new String(data, StandardCharsets.UTF_8);
+
+						Log.i("dataaaaa: ", bytesToHexString(data) );
+						//Log.i("tag", getHexString(data));
+
+
+
+						bIndex++;
+					}
+				}else{ // Authentication failed - Handle it
+					//Log.i("auth sector", String.valueOf(j) + " not");
+				}
+			}
+		}catch (IOException e) {
+			Log.e("tag", e.getLocalizedMessage());
+		}
+
+
+/*
+		// 2) Check if it was triggered by a tag discovered interruption.
+		if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
+			//  3) Get an instance of the TAG from the NfcAdapter
+			Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+			// 4) Get an instance of the Mifare classic card from this TAG intent
+			MifareClassic mfc = MifareClassic.get(tagFromIntent);
+			byte[] data;
+
+			try {       //  5.1) Connect to card
+				mfc.connect();
+				boolean auth = false;
+				String cardData = null;
+				// 5.2) and get the number of sectors this card has..and loop thru these sectors
+				int secCount = mfc.getSectorCount();
+				Log.i("sectors: ", String.valueOf(secCount));
+				int bCount = 0;
+				int bIndex = 0;
+				for(int j = 0; j < secCount; j++){
+					// 6.1) authenticate the sector
+
+					byte[] bytesKey = hex2Bytes("5FFFFFFFFFF9");
+
+					auth = mfc.authenticateSectorWithKeyA(j,bytesKey );
+					if(auth){
+						// 6.2) In each sector - get the block count
+						bCount = mfc.getBlockCountInSector(j);
+						bIndex = 0;
+						for(int i = 0; i < bCount; i++){
+							bIndex = mfc.sectorToBlock(j);
+							// 6.3) Read the block
+							data = mfc.readBlock(bIndex);
+							// 7) Convert the data into a string from Hex format.
+							Log.i("tag", getHexString(data));
+							bIndex++;
+						}
+					}else{ // Authentication failed - Handle it
+
+					}
+				}
+			}catch (IOException e) {
+				Log.e("tag", e.getLocalizedMessage());
+			}
+
+		}*/
+	}
+
+	private static final char[] BYTE2HEX=(
+			"000102030405060708090A0B0C0D0E0F"+
+					"101112131415161718191A1B1C1D1E1F"+
+					"202122232425262728292A2B2C2D2E2F"+
+					"303132333435363738393A3B3C3D3E3F"+
+					"404142434445464748494A4B4C4D4E4F"+
+					"505152535455565758595A5B5C5D5E5F"+
+					"606162636465666768696A6B6C6D6E6F"+
+					"707172737475767778797A7B7C7D7E7F"+
+					"808182838485868788898A8B8C8D8E8F"+
+					"909192939495969798999A9B9C9D9E9F"+
+					"A0A1A2A3A4A5A6A7A8A9AAABACADAEAF"+
+					"B0B1B2B3B4B5B6B7B8B9BABBBCBDBEBF"+
+					"C0C1C2C3C4C5C6C7C8C9CACBCCCDCECF"+
+					"D0D1D2D3D4D5D6D7D8D9DADBDCDDDEDF"+
+					"E0E1E2E3E4E5E6E7E8E9EAEBECEDEEEF"+
+					"F0F1F2F3F4F5F6F7F8F9FAFBFCFDFEFF").toCharArray();
+	;
+	public static String getHexString(byte[] bytes) {
+		final int len=bytes.length;
+		final char[] chars=new char[len<<1];
+		int hexIndex;
+		int idx=0;
+		int ofs=0;
+		while (ofs<len) {
+			hexIndex=(bytes[ofs++] & 0xFF)<<1;
+			chars[idx++]=BYTE2HEX[hexIndex++];
+			chars[idx++]=BYTE2HEX[hexIndex];
+		}
+		return new String(chars);
+	}
+
+	public static byte[] hex2Bytes(String hex) {
+		if (!(hex != null && hex.length() % 2 == 0
+				&& hex.matches("[0-9A-Fa-f]+"))) {
+			return null;
+		}
+		int len = hex.length();
+		byte[] data = new byte[len / 2];
+		try {
+			for (int i = 0; i < len; i += 2) {
+				data[i / 2] = (byte) ((Character.digit(hex.charAt(i), 16) << 4)
+						+ Character.digit(hex.charAt(i+1), 16));
+			}
+		} catch (Exception e) {
+			Log.d("LOG_TAG", "Argument(s) for hexStringToByteArray(String s)"
+					+ "was not a hex string");
+		}
+		return data;
+	}
+
+	public static String bytes2Hex(byte[] bytes) {
+		StringBuilder ret = new StringBuilder();
+		if (bytes != null) {
+			for (Byte b : bytes) {
+				ret.append(String.format("%02X", b.intValue() & 0xFF));
+			}
+		}
+		return ret.toString();
+	}
+
+
+}
+
+
+
+/*
+* 	String time = "";
 		if(getCardTime == 0){
 		}else{
 			time = "" + (System.currentTimeMillis() - getCardTime);
@@ -309,13 +479,14 @@ public class scanningPage extends Activity implements KeyEventResolver.OnScanSuc
 		ID =  tag.getId();
 		//data += "\n\nUID:\n" +bytesToHexString(ID);
 		data = "UID: " +bytesToHexString(ID);
-		/*data += "\nData format:";
+		//data = "UID: " +ID;
+		data += "\nData format:";
 		for (String tech : techList) {
 			data += "\n" + tech;
-		}*/
+		}
+
+
+// key: 5FFFFFFFFFF9
 		tv_show_nfc2.setText(data);
-
-	}
-
-}
+		*/
 
