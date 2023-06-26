@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cislosk"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="0dp"
+        android:layout_height="70dp"
+        android:background="#145578"
+        android:minHeight="60px"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="57dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="24dp"
+        android:layout_weight="1"
+        android:src="@drawable/skflag"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/showTime"
+        android:layout_width="wrap_content"
+        android:layout_height="70dp"
+        android:layout_weight="1"
+        android:paddingLeft="15dp"
+        android:paddingTop="13dp"
+        android:text="00:00"
+        android:textColor="@color/White"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="0dp" />
+
+    <TableLayout
+        android:id="@+id/tableLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="112dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:stretchColumns="1"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+        <TableRow android:paddingBottom="20dp">
+
+            <TextView
+                android:padding="3dip"
+                android:text="Názov vstupu:"
+                android:textAlignment="viewStart"
+                android:textColor="#145578"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/nazovvstupu"
+                android:layout_width="100dp"
+                android:gravity="right"
+                android:maxLines="10"
+
+                android:paddingLeft="30dp"
+                android:text="M | Vstup bazény dospelý 75 min. SO - NE, SV"
+                android:textAlignment="textStart"
+                android:textColor="#145578"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <View
+            android:layout_height="1dip"
+            android:background="#145578" />
+
+
+        <TableRow
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:padding="3dip"
+                android:text="Číslo skrinky:"
+                android:textAlignment="viewStart"
+                android:textColor="#145578"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/cisloskrinky"
+                android:gravity="right"
+                android:paddingLeft="30dp"
+                android:text="22"
+                android:textAlignment="textStart"
+                android:textColor="#145578"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <View
+            android:layout_height="1dip"
+            android:background="#145578" />
+
+
+        <TableRow
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:padding="3dip"
+                android:text="Doplatok:"
+                android:textAlignment="viewStart"
+                android:textColor="#145578"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/doplatok"
+                android:gravity="right"
+                android:paddingLeft="30dp"
+                android:text="0.00 EUR"
+                android:textAlignment="textStart"
+                android:textColor="#8A0A0A"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <View
+            android:layout_height="1dip"
+            android:background="#145578" />
+
+
+        <TableRow
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:padding="3dip"
+                android:text="Zostávajúci kredit:"
+                android:textAlignment="viewStart"
+                android:textColor="#145578"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/zostavajucikredit"
+                android:gravity="right"
+                android:paddingLeft="30dp"
+                android:text="10.00 EUR"
+                android:textAlignment="textStart"
+                android:textColor="#145578"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <View
+            android:layout_height="1dip"
+            android:background="#145578" />
+
+
+        <TableRow
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:gravity="center|start"
+                android:padding="3dip"
+                android:text="Dĺžka pobytu v zóne BAZÉN"
+                android:textAlignment="viewStart"
+                android:textColor="#145578"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/zone1time"
+                android:layout_height="46dp"
+                android:gravity="center|start"
+                android:paddingLeft="30dp"
+                android:text="52 min."
+                android:textAlignment="textStart"
+                android:textColor="#145578"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+        </TableRow>
+
+        <View
+            android:layout_height="1dip"
+            android:background="#145578" />
+
+
+        <TableRow
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:gravity="center|start"
+                android:padding="3dip"
+                android:text="Dĺžka pobytu v zóne SAUNA"
+                android:textAlignment="viewStart"
+                android:textColor="#145578"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/zone2time"
+                android:layout_height="46dp"
+                android:gravity="center|start"
+                android:paddingLeft="30dp"
+                android:text="10 min."
+                android:textAlignment="textStart"
+                android:textColor="#145578"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+        </TableRow>
+    </TableLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -46,7 +46,11 @@ public class MainActivity extends Activity  {
 			// not logged in
 		}else{
 			// logged in -> redirect to scanning page
-			startActivity(new Intent(MainActivity.this, scanningPage.class));
+
+			// test
+			//startActivity(new Intent(MainActivity.this, scanningPageResult.class));
+
+			 startActivity(new Intent(MainActivity.this, scanningPage.class));
 		}
 
 		// login button & textfield

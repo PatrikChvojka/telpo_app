@@ -466,16 +466,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name="com.telpo.tps550.api.demo.scanningPage"
-            android:configChanges="orientation|keyboardHidden"
-            android:windowSoftInputMode="adjustUnspecified|stateHidden"
-            android:launchMode="singleTask"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-            </intent-filter>
-        </activity>
+        <activity android:name="com.telpo.tps550.api.demo.scanningPage" />
+        <activity android:name="com.telpo.tps550.api.demo.scanningPageResult" />
 
 
     </application>

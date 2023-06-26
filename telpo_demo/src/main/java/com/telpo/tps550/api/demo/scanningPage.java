@@ -1,10 +1,8 @@
 package com.telpo.tps550.api.demo;
 
+import static androidx.core.content.ContextCompat.startActivity;
 import static com.telpo.tps550.api.demo.timedata.globalFunctions.*;
 import static com.telpo.tps550.api.demo.timedata.ovladanieSvetiel.*;
-import static com.telpo.tps550.api.demo.util.DataProcessUtils.getHexString;
-
-import static java.nio.charset.StandardCharsets.US_ASCII;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -19,17 +17,20 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.format.DateFormat;
 import android.util.Log;
+import android.util.SparseArray;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import com.common.apiutil.decode.DecodeReader;
@@ -39,13 +40,9 @@ import com.common.apiutil.util.SystemUtil;
 import com.common.callback.IDecodeReaderListener;
 import com.common.demo.R;
 import com.telpo.tps550.api.demo.decode.KeyEventResolver;
-import com.telpo.tps550.api.demo.nfc.NfcActivity;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Formatter;
 import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class scanningPage extends Activity implements KeyEventResolver.OnScanSuccessListener {
 
@@ -79,8 +76,6 @@ public class scanningPage extends Activity implements KeyEventResolver.OnScanSuc
 	};
 
 
-
-
     /*
      * FUNKCIE:
      * greenLightOn(); 	- zapne zelene diodky
@@ -102,14 +97,24 @@ public class scanningPage extends Activity implements KeyEventResolver.OnScanSuc
 		textRestult.setSingleLine(false);
 		textRestult.setHorizontallyScrolling(false);
 
+
+		// TEST BUTTON
+		// button
+		Button buttonCheck = findViewById(R.id.buttonCheck);
+		buttonCheck.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				startActivity(new Intent(scanningPage.this, scanningPageResult.class));
+			}
+		});
+
+
 		////////////////////////////////////////////////////////////////////// show time in header
 		showTime = (TextView) findViewById(R.id.showTime);
-		Handler handler = new Handler();
-		handler.postDelayed(new Runnable() {
+		Handler handler2 = new Handler();
+		handler2.postDelayed(new Runnable() {
 			@Override
 			public void run() {
-				handler.postDelayed(this, 1000);
-
+				handler2.postDelayed(this, 1000);
 				// Date
 				Date now = new Date();
 				TimeZone.setDefault(TimeZone.getTimeZone("Europe/Bratislava"));
@@ -119,10 +124,7 @@ public class scanningPage extends Activity implements KeyEventResolver.OnScanSuc
 				String getHours = formatHours.format(now);
 				SimpleDateFormat formatSeconds = new SimpleDateFormat("ss");
 				String getSeconds = formatSeconds.format(now);
-
 				showTime.setText(getHours + ":" + getMinutes + ":" + getSeconds);
-
-
 			}
 		}, 1000);
 		////////////////////////////////////////////////////////////////////// show time in header
@@ -302,25 +304,20 @@ public class scanningPage extends Activity implements KeyEventResolver.OnScanSuc
 		String action = intent.getAction();
 		Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 		MifareClassic mfc = MifareClassic.get(tagFromIntent);
+
 		byte[] data;
 
 		try {       //  5.1) Connect to card
 			mfc.connect();
 			boolean auth = false;
-			String cardData = null;
-			// 5.2) and get the number of sectors this card has..and loop thru these sectors
 			int secCount = mfc.getSectorCount();
-			//Log.i("sectors count: ", String.valueOf(secCount));
-
 			int bCount = 0;
 			int bIndex = 0;
 			for(int j = 0; j < secCount; j++){
-
 				byte[] bytesKey = hex2Bytes("5FFFFFFFFFF9");
 
 				auth = mfc.authenticateSectorWithKeyA(j,bytesKey );
 				if(auth){
-					Log.i("auth sector", String.valueOf(j) + " yes");
 					bCount = mfc.getBlockCountInSector(j);
 					bIndex = 0;
 					for(int i = 0; i < bCount; i++){
@@ -328,13 +325,11 @@ public class scanningPage extends Activity implements KeyEventResolver.OnScanSuc
 						data = mfc.readBlock(bIndex);
 
 
-						cardData = new String(data);
+						// PRINT
 
+						String temp = ByteArrayToHexString(data);
+						Log.i("temp", temp);
 
-						//String str = new String(data, StandardCharsets.UTF_8);
-
-						Log.i("dataaaaa: ", bytesToHexString(data) );
-						//Log.i("tag", getHexString(data));
 
 
 
@@ -347,85 +342,46 @@ public class scanningPage extends Activity implements KeyEventResolver.OnScanSuc
 		}catch (IOException e) {
 			Log.e("tag", e.getLocalizedMessage());
 		}
-
-
-/*
-		// 2) Check if it was triggered by a tag discovered interruption.
-		if (NfcAdapter.ACTION_TECH_DISCOVERED.equals(action)) {
-			//  3) Get an instance of the TAG from the NfcAdapter
-			Tag tagFromIntent = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-			// 4) Get an instance of the Mifare classic card from this TAG intent
-			MifareClassic mfc = MifareClassic.get(tagFromIntent);
-			byte[] data;
-
-			try {       //  5.1) Connect to card
-				mfc.connect();
-				boolean auth = false;
-				String cardData = null;
-				// 5.2) and get the number of sectors this card has..and loop thru these sectors
-				int secCount = mfc.getSectorCount();
-				Log.i("sectors: ", String.valueOf(secCount));
-				int bCount = 0;
-				int bIndex = 0;
-				for(int j = 0; j < secCount; j++){
-					// 6.1) authenticate the sector
-
-					byte[] bytesKey = hex2Bytes("5FFFFFFFFFF9");
-
-					auth = mfc.authenticateSectorWithKeyA(j,bytesKey );
-					if(auth){
-						// 6.2) In each sector - get the block count
-						bCount = mfc.getBlockCountInSector(j);
-						bIndex = 0;
-						for(int i = 0; i < bCount; i++){
-							bIndex = mfc.sectorToBlock(j);
-							// 6.3) Read the block
-							data = mfc.readBlock(bIndex);
-							// 7) Convert the data into a string from Hex format.
-							Log.i("tag", getHexString(data));
-							bIndex++;
-						}
-					}else{ // Authentication failed - Handle it
-
-					}
-				}
-			}catch (IOException e) {
-				Log.e("tag", e.getLocalizedMessage());
-			}
-
-		}*/
 	}
 
-	private static final char[] BYTE2HEX=(
-			"000102030405060708090A0B0C0D0E0F"+
-					"101112131415161718191A1B1C1D1E1F"+
-					"202122232425262728292A2B2C2D2E2F"+
-					"303132333435363738393A3B3C3D3E3F"+
-					"404142434445464748494A4B4C4D4E4F"+
-					"505152535455565758595A5B5C5D5E5F"+
-					"606162636465666768696A6B6C6D6E6F"+
-					"707172737475767778797A7B7C7D7E7F"+
-					"808182838485868788898A8B8C8D8E8F"+
-					"909192939495969798999A9B9C9D9E9F"+
-					"A0A1A2A3A4A5A6A7A8A9AAABACADAEAF"+
-					"B0B1B2B3B4B5B6B7B8B9BABBBCBDBEBF"+
-					"C0C1C2C3C4C5C6C7C8C9CACBCCCDCECF"+
-					"D0D1D2D3D4D5D6D7D8D9DADBDCDDDEDF"+
-					"E0E1E2E3E4E5E6E7E8E9EAEBECEDEEEF"+
-					"F0F1F2F3F4F5F6F7F8F9FAFBFCFDFEFF").toCharArray();
-	;
-	public static String getHexString(byte[] bytes) {
-		final int len=bytes.length;
-		final char[] chars=new char[len<<1];
-		int hexIndex;
-		int idx=0;
-		int ofs=0;
-		while (ofs<len) {
-			hexIndex=(bytes[ofs++] & 0xFF)<<1;
-			chars[idx++]=BYTE2HEX[hexIndex++];
-			chars[idx++]=BYTE2HEX[hexIndex];
+
+
+	public String convertHexToString(String hex) {
+
+		StringBuilder sb = new StringBuilder();
+		StringBuilder temp = new StringBuilder();
+
+		//49204c6f7665204a617661 split into two characters 49, 20, 4c...
+		for (int i = 0; i < hex.length() - 1; i += 2) {
+
+			//grab the hex in pairs
+			String output = hex.substring(i, (i + 2));
+			//convert hex to decimal
+			int decimal = Integer.parseInt(output, 16);
+			//convert the decimal to character
+			sb.append((char) decimal);
+
+			temp.append(decimal);
 		}
-		return new String(chars);
+		System.out.println("Decimal : " + temp.toString());
+
+		return sb.toString().trim();
+	}
+
+	private String ByteArrayToHexString(byte[] inarray) {
+		int i, j, in;
+		String[] hex = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "A",
+				"B", "C", "D", "E", "F"};
+		String out = "";
+
+		for (j = 0; j < inarray.length; ++j) {
+			in = inarray[j] & 0xff;
+			i = (in >> 4) & 0x0f;
+			out += hex[i];
+			i = in & 0x0f;
+			out += hex[i];
+		}
+		return out;
 	}
 
 	public static byte[] hex2Bytes(String hex) {
@@ -447,46 +403,4 @@ public class scanningPage extends Activity implements KeyEventResolver.OnScanSuc
 		return data;
 	}
 
-	public static String bytes2Hex(byte[] bytes) {
-		StringBuilder ret = new StringBuilder();
-		if (bytes != null) {
-			for (Byte b : bytes) {
-				ret.append(String.format("%02X", b.intValue() & 0xFF));
-			}
-		}
-		return ret.toString();
-	}
-
-
 }
-
-
-
-/*
-* 	String time = "";
-		if(getCardTime == 0){
-		}else{
-			time = "" + (System.currentTimeMillis() - getCardTime);
-		}
-		getCardTime = System.currentTimeMillis();
-
-		String data = "";
-		Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-
-		String[] techList = tag.getTechList();
-		byte[] ID = new byte[20];
-		//data = tag.toString();
-		ID =  tag.getId();
-		//data += "\n\nUID:\n" +bytesToHexString(ID);
-		data = "UID: " +bytesToHexString(ID);
-		//data = "UID: " +ID;
-		data += "\nData format:";
-		for (String tech : techList) {
-			data += "\n" + tech;
-		}
-
-
-// key: 5FFFFFFFFFF9
-		tv_show_nfc2.setText(data);
-		*/
-

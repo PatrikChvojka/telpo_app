@@ -1,10 +1,17 @@
 package com.telpo.tps550.api.demo.timedata;
+import static androidx.core.content.ContextCompat.startActivity;
 import static com.telpo.tps550.api.demo.timedata.ovladanieSvetiel.greenLightOn;
 import static com.telpo.tps550.api.demo.timedata.ovladanieSvetiel.redLightOn;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.util.Log;
+import android.view.View;
 
 import com.common.apiutil.pos.CommonUtil;
+import com.telpo.tps550.api.demo.MainActivity;
+import com.telpo.tps550.api.demo.scanningPage;
+import com.telpo.tps550.api.demo.scanningPageResult;
 
 import java.util.Arrays;
 
