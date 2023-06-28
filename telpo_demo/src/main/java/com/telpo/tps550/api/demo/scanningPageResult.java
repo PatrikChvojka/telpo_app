@@ -8,8 +8,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ProgressBar;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
 import com.common.apiutil.pos.CommonUtil;
@@ -46,6 +49,8 @@ public class scanningPageResult extends Activity  {
         zone1time = (TextView) findViewById(R.id.zone1time);
         zone2time = (TextView) findViewById(R.id.zone2time);
 
+        ProgressBar pgsBar = (ProgressBar)findViewById(R.id.pBar);
+        TableLayout tableLayout2 = (TableLayout)findViewById(R.id.tableLayout2);
 
         ////////////////////////////////////////////////////////////////////// show time in header
         showTime = (TextView) findViewById(R.id.showTime);
@@ -144,7 +149,9 @@ public class scanningPageResult extends Activity  {
                             zone2time.setText("0 MINÚT");
                         }
 
-
+                        // hide loader
+                        pgsBar.setVisibility(View.GONE);
+                        tableLayout2.setVisibility(View.VISIBLE);
 
 
 
