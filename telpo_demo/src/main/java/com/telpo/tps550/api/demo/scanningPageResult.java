@@ -39,6 +39,14 @@ public class scanningPageResult extends Activity  {
         // custom home screen
         setContentView(R.layout.scanning_page_result);
 
+        nazovvstupu = (TextView) findViewById(R.id.nazovvstupu);
+        cisloskrinky = (TextView) findViewById(R.id.cisloskrinky);
+        doplatok = (TextView) findViewById(R.id.doplatok);
+        zostavajucikredit = (TextView) findViewById(R.id.zostavajucikredit);
+        zone1time = (TextView) findViewById(R.id.zone1time);
+        zone2time = (TextView) findViewById(R.id.zone2time);
+
+
         ////////////////////////////////////////////////////////////////////// show time in header
         showTime = (TextView) findViewById(R.id.showTime);
         Handler handler2 = new Handler();
@@ -104,17 +112,45 @@ public class scanningPageResult extends Activity  {
 
                     try {
                         jsonObject[0] = new JSONObject(ticketClient._cacheTicketData);
-                        Log.i("FirstName", jsonObject[0].getString("FirstName"));
+
+                        // get openet transaction data
+                        JSONObject OpennedTransaction = new JSONObject(jsonObject[0].getString("OpennedTransaction"));
+
+                        // print data
+                        if(OpennedTransaction.has("TicketName")) {      nazovvstupu.setText(OpennedTransaction.getString("TicketName")); }
+                        if(OpennedTransaction.has("KeyNumber")) {       cisloskrinky.setText(OpennedTransaction.getString("KeyNumber")); }
+                        if(OpennedTransaction.has("Surcharge")) {
+                            doplatok.setText(String.format("%s EUR", OpennedTransaction.getString("Surcharge")));
+                        } else {
+                            zostavajucikredit.setText("0.00 EUR");
+                        }
+                        if(OpennedTransaction.has("CreditBalance")) {
+                            zostavajucikredit.setText(String.format("%s EUR", OpennedTransaction.getString("CreditBalance")));
+                        } else {
+                            zostavajucikredit.setText("0.00 EUR");
+                        }
+
+                        if(OpennedTransaction.has("Zone1Time")) {
+                            Double minutes2 = Double.parseDouble(OpennedTransaction.getString("Zone1Time"));
+                            zone1time.setText(String.format("%s MINÚT", Math.round(minutes2)));
+                        } else {
+                            zone1time.setText("0 MINÚT");
+                        }
+
+                        if(OpennedTransaction.has("Zone2Time")) {
+                            Double minutes2 = Double.parseDouble(OpennedTransaction.getString("Zone2Time"));
+                            zone2time.setText(String.format("%s MINÚT", Math.round(minutes2)));
+                        } else {
+                            zone2time.setText("0 MINÚT");
+                        }
+
+
+
 
 
                     } catch (JSONException e) {
                         throw new RuntimeException(e);
                     }
-
-
-                    // {"CustomerId":0,"Gender":0,"FirstName":"Test","LastName":"Infoterminál","FullName":"Test Infoterminál","Status":1,"CreditAccountAllowed":false,"CreditBalance":0.0,"AvailableTicketsNames":[],"OpennedTransaction":{"TransactionId":0,"EntryDate":"0001-01-01T00:00:00","TotalTime":"00:00:00","Zone1Time":0.0,"Zone2Time":0.0,"KeyNumber":null,"TicketName":null,"Surcharge":0.0,"IsValid":false,"IsBusy":false},"IsValid":false,"IsBusy":false}
-
-
                 }
             }
         }, delay);

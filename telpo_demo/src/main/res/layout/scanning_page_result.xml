@@ -49,8 +49,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="112dp"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         android:stretchColumns="1"
         app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
@@ -70,7 +70,6 @@
                 android:maxLines="10"
 
                 android:paddingLeft="30dp"
-                android:text="M | Vstup bazény dospelý 75 min. SO - NE, SV"
                 android:textAlignment="textStart"
                 android:textColor="#145578"
                 android:textSize="16sp"
@@ -99,10 +98,9 @@
                 android:id="@+id/cisloskrinky"
                 android:gravity="right"
                 android:paddingLeft="30dp"
-                android:text="22"
                 android:textAlignment="textStart"
                 android:textColor="#145578"
-                android:textSize="26sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
         </TableRow>
 
@@ -128,10 +126,9 @@
                 android:id="@+id/doplatok"
                 android:gravity="right"
                 android:paddingLeft="30dp"
-                android:text="0.00 EUR"
                 android:textAlignment="textStart"
                 android:textColor="#8A0A0A"
-                android:textSize="26sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
         </TableRow>
 
@@ -157,10 +154,9 @@
                 android:id="@+id/zostavajucikredit"
                 android:gravity="right"
                 android:paddingLeft="30dp"
-                android:text="10.00 EUR"
                 android:textAlignment="textStart"
                 android:textColor="#145578"
-                android:textSize="26sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
         </TableRow>
 
@@ -188,10 +184,9 @@
                 android:layout_height="46dp"
                 android:gravity="center|start"
                 android:paddingLeft="30dp"
-                android:text="52 min."
                 android:textAlignment="textStart"
                 android:textColor="#145578"
-                android:textSize="26sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
         </TableRow>
 
@@ -219,10 +214,9 @@
                 android:layout_height="46dp"
                 android:gravity="center|start"
                 android:paddingLeft="30dp"
-                android:text="10 min."
                 android:textAlignment="textStart"
                 android:textColor="#145578"
-                android:textSize="26sp"
+                android:textSize="24sp"
                 android:textStyle="bold" />
         </TableRow>
     </TableLayout>
